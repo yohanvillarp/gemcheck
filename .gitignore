@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.turbo/
+*.log
+reports/
+.env
+.env.local
+.DS_Store
+.vscode/
+*.swp
+.agents/

@@ -1,0 +1,13 @@
+﻿{
+  "globalDependencies": ["package.json"],
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "test": {
+      "outputs": ["coverage/**"]
+    },
+    "lint": {}
+  }
+}

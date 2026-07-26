@@ -1,0 +1,19 @@
+﻿{
+  "name": "gemcheck",
+  "version": "0.1.0",
+  "description": "Auditoría integral de calidad de software",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm -F @gemcheck/cli dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "tsx": "^4.7.0",
+    "@types/node": "^20.10.6",
+    "turbo": "^1.10.0"
+  },
+  "packageManager": "pnpm@8.14.0"
+}
