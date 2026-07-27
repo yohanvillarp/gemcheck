@@ -24,11 +24,11 @@ El proyecto está organizado en un "monorepo" y sigue los principios de la Arqui
 
 ## Estructura del Proyecto
 
-* **`@gemcheck/domain`**: El núcleo de la herramienta. Aquí guardamos las reglas y configuraciones principales sin depender de nada externo.
-* **`@gemcheck/application`**: La lógica que hace que todo funcione. Conecta las reglas del dominio con las herramientas externas.
-* **`@gemcheck/infrastructure`**: La capa que se comunica con el mundo exterior (como bases de datos SQLite, lectura de archivos e historial de Git).
-* **`@gemcheck/cli`**: La interfaz de la terminal. Es lo que interactúa contigo cuando escribes `gemcheck` en la consola.
-* **`@gemcheck/dashboard`**: Un panel de control visual hecho en React para que puedas ver los reportes de manera gráfica y ajustar la configuración.
+* **`@nikelyh/gemcheck-domain`**: El núcleo de la herramienta. Aquí guardamos las reglas y configuraciones principales sin depender de nada externo.
+* **`@nikelyh/gemcheck-application`**: La lógica que hace que todo funcione. Conecta las reglas del dominio con las herramientas externas.
+* **`@nikelyh/gemcheck-infrastructure`**: La capa que se comunica con el mundo exterior (como bases de datos SQLite, lectura de archivos e historial de Git).
+* **`@nikelyh/gemcheck`**: La interfaz de la terminal. Es lo que interactúa contigo cuando escribes `gemcheck` en la consola.
+* **`@nikelyh/gemcheck-dashboard`**: Un panel de control visual hecho en React para que puedas ver los reportes de manera gráfica y ajustar la configuración.
 
 ## Funcionalidades Actuales
 
@@ -58,16 +58,16 @@ La forma más fácil de usar Gemcheck en cualquier proyecto es ejecutándolo con
 cd mi-proyecto
 
 # Ejecuta el escaneo de git
-npx @gemcheck/cli git
+npx @nikelyh/gemcheck git
 
 # O abre el panel de control
-npx @gemcheck/cli config --ui
+npx @nikelyh/gemcheck config --ui
 ```
 
 Si prefieres tenerlo disponible en tu sistema en todo momento, puedes instalarlo globalmente:
 
 ```bash
-npm install -g @gemcheck/cli
+npm install -g @nikelyh/gemcheck
 
 # Ahora puedes usarlo en cualquier lugar:
 gemcheck git
@@ -79,11 +79,11 @@ gemcheck config --ui
 Si quieres utilizar las herramientas de Gemcheck dentro de tu propio código (por ejemplo, para crear scripts personalizados), puedes instalar los módulos que necesites:
 
 ```bash
-npm install @gemcheck/domain @gemcheck/application
+npm install @nikelyh/gemcheck-domain @nikelyh/gemcheck-application
 ```
 
 ```typescript
-import { GitAnalyzerService } from '@gemcheck/application';
+import { GitAnalyzerService } from '@nikelyh/gemcheck-application';
 // ... usar el servicio en tu código
 ```
 
