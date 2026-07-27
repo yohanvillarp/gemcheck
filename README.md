@@ -8,6 +8,10 @@
     <a href="https://reactjs.org/"><img src="https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB" alt="React" /></a>
     <a href="https://pnpm.io/"><img src="https://img.shields.io/badge/pnpm-F69220?style=flat-square&logo=pnpm&logoColor=white" alt="pnpm" /></a>
   </p>
+  <p>
+    <a href="https://www.npmjs.com/package/gemcheck"><img src="https://img.shields.io/npm/v/gemcheck.svg?style=flat-square" alt="NPM Version" /></a>
+    <a href="https://github.com/changesets/changesets"><img src="https://img.shields.io/badge/maintained%20with-changesets-1769aa.svg?style=flat-square" alt="Changesets" /></a>
+  </p>
 </div>
 
 ---
@@ -37,18 +41,9 @@ Actualmente, Gemcheck ya puede hacer varias cosas geniales por tu proyecto:
 * **Panel de Control Visual (Dashboard):** Una interfaz web limpia y amigable para ver los resultados de tus análisis.
 * **Configuración Dinámica:** Puedes ajustar todos los valores y umbrales de los análisis a través de la interfaz web. Todo se guarda de forma persistente en una base de datos local para tus futuros análisis.
 
-## Funcionalidades Planificadas
+## Roadmap
 
-Estamos trabajando para que Gemcheck sea aún más completo. En el futuro, añadiremos:
-
-* **Análisis Estático Avanzado:**
-  * Evaluación de complejidad ciclomática para encontrar código difícil de leer.
-  * Detección de código duplicado.
-  * Escaneo básico de vulnerabilidades (SAST).
-* **Pruebas Dinámicas:**
-  * Pruebas de carga y estrés automatizadas para medir el rendimiento.
-  * Pruebas de caos (simular caídas y lentitud).
-  * Pruebas de contrato para asegurar que las APIs se comunican correctamente.
+Para conocer las funcionalidades que tenemos planeadas (como Análisis Estático Avanzado y Pruebas Dinámicas), revisa nuestro documento de [ROADMAP.md](./ROADMAP.md).
 
 ## Uso
 
