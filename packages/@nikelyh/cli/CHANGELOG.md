@@ -1,5 +1,11 @@
 # gemcheck
 
+## 0.2.2
+
+### Patch Changes
+
+- Añadir README.md limpio al paquete CLI para mostrar instrucciones en la página de NPM.
+
 ## 0.2.1
 
 ### Patch Changes
