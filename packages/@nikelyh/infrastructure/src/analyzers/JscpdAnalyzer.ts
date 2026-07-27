@@ -11,7 +11,7 @@ export class JscpdAnalyzer implements IAnalyzer {
       // Ejecutamos jscpd como proceso
       // Usamos execFile con npx para invocar jscpd de forma segura pasando parámetros como array
       const binName = process.platform === 'win32' ? 'npx.cmd' : 'npx';
-      await execFileAsync(binName, ['jscpd', options.projectPath, '--reporters', 'json', '--output', './reports', '--silent']);
+      await execFileAsync(binName, ['jscpd', options.projectPath, '--reporters', 'json', '--output', './reports', '--silent'], { shell: true });
       
       // jscpd genera un archivo jscpd-report.json en ./reports
       const reportPath = path.resolve(process.cwd(), 'reports', 'jscpd-report.json');
