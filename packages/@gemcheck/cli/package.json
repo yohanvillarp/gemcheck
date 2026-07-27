@@ -4,7 +4,7 @@
   "description": "CLI for software quality auditing",
   "type": "module",
   "bin": {
-    "gemcheck": "./bin/cli.js"
+    "gemcheck": "bin/cli.js"
   },
   "files": [
     "dist",
