@@ -1,19 +1,17 @@
 import { IAnalyzer, FileMetric } from '@gemcheck/domain';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 import * as path from 'path';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 export class JscpdAnalyzer implements IAnalyzer {
   async analyze(options: { projectPath: string }): Promise<{ fileMetrics: FileMetric[]; duplications: number }> {
     try {
       // Ejecutamos jscpd como proceso
-      // Usamos el binario local instalado en node_modules
-      const jscpdBin = path.resolve(process.cwd(), 'node_modules', '.bin', 'jscpd');
-      const command = `npx jscpd "${options.projectPath}" --reporters json --output ./reports --silent`;
-      
-      await execAsync(command);
+      // Usamos execFile con npx para invocar jscpd de forma segura pasando parámetros como array
+      const binName = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+      await execFileAsync(binName, ['jscpd', options.projectPath, '--reporters', 'json', '--output', './reports', '--silent']);
       
       // jscpd genera un archivo jscpd-report.json en ./reports
       const reportPath = path.resolve(process.cwd(), 'reports', 'jscpd-report.json');

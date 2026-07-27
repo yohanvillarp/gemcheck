@@ -20,7 +20,18 @@ export function startDashboardServer(dashboardPath: string, projectName: string,
   const server = http.createServer(async (req, res) => {
     const url = req.url || '/';
     const pathname = url.split('?')[0];
-    let filePath = dashboardPath + (pathname === '/' ? '/index.html' : pathname);
+    
+    const safePathname = pathname === '/' ? '/index.html' : pathname;
+    const requestedPath = path.resolve(dashboardPath, '.' + safePathname);
+    
+    // Seguridad: Prevenir Path Traversal asegurando que se mantiene dentro de dashboardPath
+    if (!requestedPath.startsWith(path.resolve(dashboardPath))) {
+      res.writeHead(403, { 'Content-Type': 'text/plain' });
+      res.end('Forbidden: Path Traversal Detected');
+      return;
+    }
+    
+    let filePath = requestedPath;
     
     // Endpoint para historial
     if (pathname === '/api/history') {
