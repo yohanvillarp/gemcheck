@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
 
 export async function configCommand(options: any) {
   if (options.ui) {
-    const dashboardPath = path.resolve(__dirname, '../../../dashboard/dist');
+    const dashboardPath = path.resolve(__dirname, '../ui');
     // Using a placeholder projectName because the config UI is global, not project-specific.
     // DashboardServer currently expects a projectName to construct paths, but config doesn't need it.
     startDashboardServer(dashboardPath, 'global-config', 'config');

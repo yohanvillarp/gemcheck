@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 export async function helpCommand(options: any) {
   if (options.ui) {
-    const dashboardPath = path.resolve(__dirname, '../../../dashboard/dist');
+    const dashboardPath = path.resolve(__dirname, '../ui');
     console.log(chalk.cyan('➤ Lanzando Documentación Interactiva...'));
     startDashboardServer(dashboardPath, 'Documentación Gemcheck', 'help');
     return;

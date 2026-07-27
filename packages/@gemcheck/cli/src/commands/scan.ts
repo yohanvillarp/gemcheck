@@ -31,7 +31,7 @@ export async function scanCommand(options: any) {
     console.log(chalk.blue('Reportes guardados en ./reports'));
 
     if (options.ui) {
-      const dashboardPath = path.resolve(__dirname, '../../../dashboard/dist');
+      const dashboardPath = path.resolve(__dirname, '../ui');
       startDashboardServer(dashboardPath, result.projectName, 'scan');
     }
 

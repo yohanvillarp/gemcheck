@@ -61,7 +61,7 @@ export async function gitCommand(options: any) {
         console.log(chalk.green.bold(`[PASS] INTEGRACIÓN APROBADA: El flujo de trabajo del equipo cumple con los estándares de salud.`));
       }
     } else if (options.ui) {
-      const dashboardPath = path.resolve(__dirname, '../../../dashboard/dist');
+      const dashboardPath = path.resolve(__dirname, '../ui');
       startDashboardServer(dashboardPath, projectName, 'git');
     }
 
