@@ -11,7 +11,7 @@
     "bin"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node scripts/copy-ui.js",
     "dev": "tsx src/index.ts",
     "test": "vitest"
   },
@@ -25,6 +25,7 @@
     "ora": "^8.0.1"
   },
   "devDependencies": {
+    "@gemcheck/dashboard": "workspace:*",
     "@types/node": "^20.10.6",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3",
