@@ -6,6 +6,10 @@
   "bin": {
     "gemcheck": "./bin/cli.js"
   },
+  "files": [
+    "dist",
+    "bin"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
