@@ -4,7 +4,8 @@ import { scanCommand } from './commands/scan.js';
 import { gitCommand } from './commands/git.js';
 import { helpCommand } from './commands/help.js';
 import { configCommand } from './commands/config.js';
-
+import { complexityCommand } from './commands/complexity.js';
+import { runFix } from './commands/fix.js';
 export default async function main() {
   program
     .name('gemcheck')
@@ -38,6 +39,20 @@ export default async function main() {
     .description('Manage global configuration')
     .option('--ui', 'Launch visual configuration dashboard', false)
     .action(configCommand);
+
+  program
+    .command('complexity')
+    .description('Analyze cyclomatic complexity')
+    .option('--project <name>', 'Project path', process.cwd())
+    .option('--ui', 'Launch visual complexity dashboard', false)
+    .action(complexityCommand);
+
+  program
+    .command('fix [ruleOrFile]')
+    .description('Run automated code fixes')
+    .option('--patch', 'Generar un archivo patch en vez de sobreescribir', false)
+    .option('--yes', 'Omitir confirmación interactiva', false)
+    .action(runFix);
 
   await program.parseAsync(process.argv);
 }

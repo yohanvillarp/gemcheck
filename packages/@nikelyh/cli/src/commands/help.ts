@@ -25,6 +25,8 @@ ${chalk.bold('Comandos Principales:')}
             duplicación de código y problemas de mantenibilidad.
   ${chalk.green('git')}     Analiza el historial evolutivo, identificando cuellos de
             botella (Bus Factor), hotspots y acoplamiento lógico.
+  ${chalk.green('complexity')} Analiza la complejidad ciclomática de las funciones
+            para identificar bloques de código difíciles de mantener.
   ${chalk.green('help')}    Muestra este manual de ayuda o lanza la interfaz web interactiva.
 
 ${chalk.bold('Opciones Globales:')}

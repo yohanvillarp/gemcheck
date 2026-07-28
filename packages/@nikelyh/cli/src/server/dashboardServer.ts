@@ -1,12 +1,15 @@
-import * as http from 'http';
 import * as fs from 'fs';
 import * as path from 'path';
 import chalk from 'chalk';
 import open from 'open';
+import express from 'express';
 import { SqliteHistoryRepository, SqliteConfigRepository } from '@nikelyh/gemcheck-infrastructure';
 import { GIT_ANALYZER_THRESHOLDS } from '@nikelyh/gemcheck-domain';
+import { TriageUseCase, AutoFixUseCase } from '@nikelyh/gemcheck-application';
+import { JscodeshiftFixer } from '@nikelyh/gemcheck-infrastructure';
+import { exec } from 'child_process';
 
-export function startDashboardServer(dashboardPath: string, projectName: string, mode?: 'git' | 'scan' | 'help' | 'config') {
+export function startDashboardServer(dashboardPath: string, projectName: string, mode?: 'git' | 'scan' | 'help' | 'config' | 'complexity') {
   const sqliteRepo = new SqliteHistoryRepository();
   const configRepo = new SqliteConfigRepository();
   const safeProjectName = path.basename(projectName);
@@ -17,163 +20,169 @@ export function startDashboardServer(dashboardPath: string, projectName: string,
     return;
   }
 
-  const server = http.createServer(async (req, res) => {
-    const url = req.url || '/';
-    const pathname = url.split('?')[0];
-    
-    const safePathname = pathname === '/' ? '/index.html' : pathname;
-    const requestedPath = path.resolve(dashboardPath, '.' + safePathname);
-    
-    // Seguridad: Prevenir Path Traversal asegurando que se mantiene dentro de dashboardPath
-    if (!requestedPath.startsWith(path.resolve(dashboardPath))) {
-      res.writeHead(403, { 'Content-Type': 'text/plain' });
-      res.end('Forbidden: Path Traversal Detected');
-      return;
-    }
-    
-    let filePath = requestedPath;
-    
-    // Endpoint para historial
-    if (pathname === '/api/history') {
-      try {
-        const history = await sqliteRepo.getProjectHistory(projectName);
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(history));
-      } catch (err) {
-        res.writeHead(500);
-        res.end(JSON.stringify({ error: 'Error fetching history' }));
-      }
-      return;
-    }
+  const app = express();
+  app.use(express.json());
 
-    // Endpoint para detalles de duplicación
-    if (pathname === '/api/duplications') {
-      try {
-        const jscpdReportPath = path.join(process.cwd(), 'reports', 'jscpd-report.json');
-        if (!fs.existsSync(jscpdReportPath)) {
-          res.writeHead(404, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Reporte jscpd no encontrado' }));
-          return;
+  app.get('/api/history', async (req, res) => {
+    try {
+      const history = await sqliteRepo.getProjectHistory(projectName);
+      res.json(history);
+    } catch (err) {
+      res.status(500).json({ error: 'Error fetching history' });
+    }
+  });
+
+  app.get('/api/duplications', (req, res) => {
+    try {
+      const jscpdReportPath = path.join(process.cwd(), 'reports', 'jscpd-report.json');
+      if (!fs.existsSync(jscpdReportPath)) {
+        return res.status(404).json({ error: 'Reporte jscpd no encontrado' });
+      }
+      
+      const reportContent = fs.readFileSync(jscpdReportPath, 'utf8');
+      const report = JSON.parse(reportContent);
+      
+      const duplicates = Array.isArray(report.duplicates) ? report.duplicates : [];
+      const topDuplicates = duplicates.sort((a: any, b: any) => (b.lines || 0) - (a.lines || 0)).slice(0, 50);
+
+      res.json(topDuplicates);
+    } catch (err) {
+      console.error('[WARN] Error procesando /api/duplications:', err);
+      res.status(500).json({ error: 'Error processing duplication details' });
+    }
+  });
+
+  app.get('/api/git', (req, res) => {
+    try {
+      const gitReportPath = path.join(process.cwd(), 'reports', 'git-activity.json');
+      if (!fs.existsSync(gitReportPath)) {
+        return res.status(404).json({ error: 'Reporte Git no encontrado' });
+      }
+      const reportContent = fs.readFileSync(gitReportPath, 'utf8');
+      res.type('json').send(reportContent);
+    } catch (err) {
+      res.status(500).json({ error: 'Error processing git details' });
+    }
+  });
+
+  app.get('/api/complexity', (req, res) => {
+    try {
+      const compReportPath = path.join(process.cwd(), 'reports', 'complexity-report.json');
+      if (!fs.existsSync(compReportPath)) {
+        return res.status(404).json({ error: 'Reporte de complejidad no encontrado' });
+      }
+      const reportContent = fs.readFileSync(compReportPath, 'utf8');
+      res.type('json').send(reportContent);
+    } catch (err) {
+      res.status(500).json({ error: 'Error processing complexity details' });
+    }
+  });
+
+  app.get('/api/triage', async (req, res) => {
+    try {
+      if (!fs.existsSync(dataJsonPath)) {
+        return res.status(404).json({ error: 'No data.json found. Run gemcheck scan first.' });
+      }
+      const gitReportPath = path.join(process.cwd(), 'reports', 'git-activity.json');
+      if (!fs.existsSync(gitReportPath)) {
+        return res.status(404).json({ error: 'Reporte de Git no encontrado. Ejecuta `gemcheck git` para habilitar el Triage Inteligente.' });
+      }
+      
+      const auditData = JSON.parse(fs.readFileSync(dataJsonPath, 'utf8'));
+      const gitReport = JSON.parse(fs.readFileSync(gitReportPath, 'utf8'));
+      
+      const config = await configRepo.getConfig();
+      const activeConfig = config || { git: GIT_ANALYZER_THRESHOLDS, scan: {} };
+      
+      const triageUseCase = new TriageUseCase(activeConfig.git);
+      const triageReport = triageUseCase.execute(auditData, gitReport);
+      
+      res.json(triageReport);
+    } catch (err) {
+      console.error('[WARN] Error en /api/triage:', err);
+      res.status(500).json({ error: 'Error procesando el Triage Inteligente' });
+    }
+  });
+
+  app.post('/api/fix', async (req, res) => {
+    try {
+      const { files, rule = 'var-to-let' } = req.body;
+      if (!files || !Array.isArray(files)) {
+        return res.status(400).json({ error: 'Se requiere una lista de archivos.' });
+      }
+
+      const fixer = new JscodeshiftFixer();
+      const useCase = new AutoFixUseCase(fixer);
+      
+      const absoluteFiles = files.map(f => path.resolve(process.cwd(), f));
+      
+      const results = await useCase.execute(rule, absoluteFiles);
+      res.json({ results });
+    } catch (err: any) {
+      console.error('[WARN] Error en /api/fix:', err);
+      res.status(500).json({ error: 'Error ejecutando el Auto-Fixer', details: err.message });
+    }
+  });
+
+  app.post('/api/rescan', (req, res) => {
+    try {
+      // Ejecutamos el scan actualizando data.json
+      exec('npx gemcheck scan', { cwd: process.cwd() }, (error, stdout, stderr) => {
+        if (error) {
+          console.error('[WARN] Error en rescan:', stderr);
+          return res.status(500).json({ error: 'Error al re-escanear el proyecto' });
         }
-        
-        const reportContent = fs.readFileSync(jscpdReportPath, 'utf8');
-        const report = JSON.parse(reportContent);
-        
-        const duplicates = Array.isArray(report.duplicates) ? report.duplicates : [];
-        const sortedDuplicates = duplicates.sort((a: any, b: any) => (b.lines || 0) - (a.lines || 0));
-        const topDuplicates = sortedDuplicates.slice(0, 50);
-
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(topDuplicates));
-      } catch (err) {
-        console.error('[WARN] Error procesando /api/duplications:', err);
-        res.writeHead(500);
-        res.end(JSON.stringify({ error: 'Error processing duplication details' }));
-      }
-      return;
+        res.json({ success: true });
+      });
+    } catch (err: any) {
+      console.error('[WARN] Error en /api/rescan:', err);
+      res.status(500).json({ error: 'Error en servidor', details: err.message });
     }
+  });
 
-    // Endpoint para Git
-    if (pathname === '/api/git') {
-      try {
-        const gitReportPath = path.join(process.cwd(), 'reports', 'git-activity.json');
-        if (!fs.existsSync(gitReportPath)) {
-          res.writeHead(404, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Reporte Git no encontrado' }));
-          return;
-        }
-        const reportContent = fs.readFileSync(gitReportPath, 'utf8');
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(reportContent);
-      } catch (err) {
-        res.writeHead(500);
-        res.end(JSON.stringify({ error: 'Error processing git details' }));
-      }
-      return;
+  app.get('/data.json', (req, res) => {
+    if (!fs.existsSync(dataJsonPath)) {
+      return res.status(404).json({ error: 'No data.json found. Run gemcheck scan first.' });
     }
+    res.sendFile(dataJsonPath);
+  });
 
-    // Servir el data.json
-    if (pathname === '/data.json') {
-      filePath = dataJsonPath;
+  app.get('/api/config', async (req, res) => {
+    try {
+      const config = await configRepo.getConfig();
+      const activeConfig = config || { git: GIT_ANALYZER_THRESHOLDS, scan: {} };
+      res.json(activeConfig);
+    } catch (err) {
+      res.status(500).json({ error: 'Error fetching config' });
     }
+  });
 
-    // Endpoints de configuración
-    if (pathname === '/api/config') {
-      if (req.method === 'GET') {
-        try {
-          const config = await configRepo.getConfig();
-          const activeConfig = config || { git: GIT_ANALYZER_THRESHOLDS, scan: {} };
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify(activeConfig));
-        } catch (err) {
-          res.writeHead(500);
-          res.end(JSON.stringify({ error: 'Error fetching config' }));
-        }
-        return;
-      } else if (req.method === 'POST') {
-        let body = '';
-        req.on('data', chunk => {
-          body += chunk.toString();
-        });
-        req.on('end', async () => {
-          try {
-            const config = JSON.parse(body);
-            await configRepo.saveConfig(config);
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ success: true }));
-          } catch (err) {
-            res.writeHead(500);
-            res.end(JSON.stringify({ error: 'Error saving config' }));
-          }
-        });
-        return;
-      }
+  app.post('/api/config', async (req, res) => {
+    try {
+      await configRepo.saveConfig(req.body);
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: 'Error saving config' });
     }
+  });
 
-    if (pathname === '/api/config/reset' && req.method === 'POST') {
-      try {
-        await configRepo.resetConfig();
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: true }));
-      } catch (err) {
-        res.writeHead(500);
-        res.end(JSON.stringify({ error: 'Error resetting config' }));
-      }
-      return;
+  app.post('/api/config/reset', async (req, res) => {
+    try {
+      await configRepo.resetConfig();
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: 'Error resetting config' });
     }
+  });
 
-    const extname = String(path.extname(filePath)).toLowerCase();
-    const mimeTypes: { [key: string]: string } = {
-      '.html': 'text/html',
-      '.js': 'text/javascript',
-      '.css': 'text/css',
-      '.json': 'application/json',
-      '.png': 'image/png',
-      '.jpg': 'image/jpg',
-      '.svg': 'image/svg+xml'
-    };
-
-    const contentType = mimeTypes[extname] || 'application/octet-stream';
-
-    fs.readFile(filePath, (error, content) => {
-      if (error) {
-        if (pathname === '/data.json') {
-          // Si piden data.json pero no existe, devolver error claro
-          res.writeHead(404);
-          res.end(JSON.stringify({ error: 'No data.json found. Run gemcheck scan first.' }));
-        } else {
-          res.writeHead(500);
-          res.end('Error interno: ' + error.code + ' ..\n');
-        }
-      } else {
-        res.writeHead(200, { 'Content-Type': contentType });
-        res.end(content, 'utf-8');
-      }
-    });
+  app.use(express.static(dashboardPath));
+  
+  app.get(/(.*)/, (req, res) => {
+    res.sendFile(path.join(dashboardPath, 'index.html'));
   });
 
   const port = 3333;
-  server.listen(port, () => {
+  app.listen(port, () => {
     console.log(chalk.cyan(`\n[UI] Servidor del Dashboard iniciado en http://localhost:${port}`));
     console.log(chalk.cyan(`[UI] Abriendo navegador... (Presiona Ctrl+C para detener)`));
     const url = mode ? `http://localhost:${port}?mode=${mode}` : `http://localhost:${port}`;

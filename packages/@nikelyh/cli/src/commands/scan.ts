@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import ora from 'ora';
-import { AuditOrchestrator, DeduplicatingHistoryRepository } from '@nikelyh/gemcheck-application';
-import { LocalStaticAnalyzer, JsonReporter, SqliteHistoryRepository, JscpdAnalyzer, LocalDirectoryHasher } from '@nikelyh/gemcheck-infrastructure';
+import { AuditOrchestrator } from '@nikelyh/gemcheck-application';
+import { AstStructuralAnalyzer, JsonReporter, SqliteHistoryRepository, JscpdAnalyzer, LocalDirectoryHasher } from '@nikelyh/gemcheck-infrastructure';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { startDashboardServer } from '../server/dashboardServer.js';
@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
 export async function scanCommand(options: any) {
   const sqliteRepo = new SqliteHistoryRepository();
   const orchestrator = new AuditOrchestrator(
-    [new LocalStaticAnalyzer(), new JscpdAnalyzer()],
+    [new AstStructuralAnalyzer(), new JscpdAnalyzer()],
     new JsonReporter('./reports'),
     sqliteRepo,
     new LocalDirectoryHasher()
