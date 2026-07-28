@@ -16,19 +16,21 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@nikelyh/gemcheck-domain": "workspace:*",
     "@nikelyh/gemcheck-application": "workspace:*",
+    "@nikelyh/gemcheck-domain": "workspace:*",
     "@nikelyh/gemcheck-infrastructure": "workspace:*",
     "chalk": "^5.3.0",
     "commander": "^11.1.0",
+    "express": "^5.2.1",
     "open": "^11.0.0",
     "ora": "^8.0.1"
   },
   "devDependencies": {
     "@nikelyh/gemcheck-dashboard": "workspace:*",
+    "@types/express": "^5.0.6",
     "@types/node": "^20.10.6",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3",
-    "vitest": "^1.0.4"
+    "vitest": "^4.1.10"
   }
 }
