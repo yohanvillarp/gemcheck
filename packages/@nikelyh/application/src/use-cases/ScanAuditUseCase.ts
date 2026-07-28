@@ -1,4 +1,4 @@
-import { AuditResult, IAnalyzer, IReporter, TdrCalculator, IHistoryRepository } from '@nikelyh/gemcheck-domain';
+import { AuditResult, IAnalyzer, IReporter, TdrCalculator } from '@nikelyh/gemcheck-domain';
 
 export class ScanAuditUseCase {
   private tdrCalculator: TdrCalculator;
@@ -6,7 +6,7 @@ export class ScanAuditUseCase {
   constructor(
     private analyzers: IAnalyzer[],
     private reporter: IReporter,
-    private historyRepo?: IHistoryRepository
+    private _historyRepo?: any // eslint-disable-line no-unused-vars
   ) {
     this.tdrCalculator = new TdrCalculator();
   }
@@ -19,7 +19,7 @@ export class ScanAuditUseCase {
       this.analyzers.map(analyzer => analyzer.analyze({ projectPath }))
     );
 
-    let allFileMetrics = [];
+    const allFileMetrics = [];
     let maxDuplications = 0;
 
     for (const res of results) {

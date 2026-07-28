@@ -25,10 +25,12 @@ export class AuditOrchestrator {
 
       if (lastRecord && lastRecord.hashSignature === currentHash) {
         console.log('\x1b[33m%s\x1b[0m', '⚡ [CACHÉ] No se detectaron cambios en el código. Cargando reporte anterior...');
-        return Object.assign(
+        const cachedResult = Object.assign(
           new AuditResult(projectName, { tdr: 0, totalLinesOfCode: 0, technicalDebtInMinutes: 0, mcCabe: [], maintainabilityIndex: 0, duplications: 0 }, new Date(), []),
           JSON.parse(lastRecord.dataJson)
         );
+        await this.reporter.report(cachedResult);
+        return cachedResult;
       }
     }
 

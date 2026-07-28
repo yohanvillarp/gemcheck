@@ -273,93 +273,86 @@ export class GitAnalyzerService {
   }
 
   private calculateAdvancedMetrics(commits: GitCommit[]) {
-    // 1. Defect Density
-    let totalLinesChanged = 0;
-    let totalFixes = 0;
+    const state = {
+      totalLinesChanged: 0,
+      totalFixes: 0,
+      small: 0, medium: 0, large: 0,
+      totalFridayCommits: 0,
+      fridayFixesCount: 0,
+    };
 
-    // 2. Commit Atomicity
-    let small = 0, medium = 0, large = 0;
-
-    // 3. Friday Fixes
-    let totalFridayCommits = 0;
-    let fridayFixesCount = 0;
-
-    // 4 & 5. Intersección y Archivos Abandonados
     const fileAuthorsCount = new Map<string, Set<string>>();
     const fileLastCommitDate = new Map<string, Date>();
 
-    commits.forEach(commit => {
-      // Filtrar bots para métricas de equipo
-      const isBot = commit.author.toLowerCase().includes('bot') || commit.author.toLowerCase().includes('github-actions');
-      const authorName = commit.author.split(' <')[0];
-      const commitDate = new Date(commit.date);
+    commits.forEach(commit => this.processCommitForAdvancedMetrics(commit, state, fileAuthorsCount, fileLastCommitDate));
 
-      // Defect Density & Atomicity (todos los commits cuentan para la anatomía del proyecto)
-      totalLinesChanged += (commit.metrics.addedLines + commit.metrics.deletedLines);
-      if (commit.isFix) totalFixes++;
+    const defectDensity = state.totalLinesChanged > 0 ? (state.totalFixes / (state.totalLinesChanged / 1000)) : 0;
+    const fridayFixesPercentage = state.totalFridayCommits > 0 ? Math.round((state.fridayFixesCount / state.totalFridayCommits) * 100) : 0;
 
-      const filesCount = commit.files.length;
-      if (filesCount <= this.config.ADVANCED.ATOMICITY_SMALL_MAX_FILES) small++;
-      else if (filesCount <= this.config.ADVANCED.ATOMICITY_MEDIUM_MAX_FILES) medium++;
-      else large++;
+    const intersectionComplexity = this.getTopIntersectionComplexity(fileAuthorsCount);
+    const abandonedFiles = this.getTopAbandonedFiles(fileLastCommitDate);
 
-      // Friday Fixes
-      // getDay() retorna 5 para Viernes
-      if (commitDate.getDay() === 5) {
-        totalFridayCommits++;
-        if (commit.isFix) fridayFixesCount++;
-      }
+    return {
+      defectDensity: Number(defectDensity.toFixed(2)),
+      commitAtomicity: { small: state.small, medium: state.medium, large: state.large },
+      fridayFixes: fridayFixesPercentage,
+      intersectionComplexity,
+      abandonedFiles
+    };
+  }
 
-      // Archivos por autor y última modificación (ignorando configs para evitar falsos positivos)
-      if (!isBot) {
-        commit.files.forEach(file => {
-          if (this.isIgnorableFile(file.name)) {
-            return;
-          }
+  private processCommitForAdvancedMetrics(commit: GitCommit, state: any, fileAuthorsCount: Map<string, Set<string>>, fileLastCommitDate: Map<string, Date>) {
+    const isBot = commit.author.toLowerCase().includes('bot') || commit.author.toLowerCase().includes('github-actions');
+    const authorName = commit.author.split(' <')[0];
+    const commitDate = new Date(commit.date);
 
-          // Intersection Complexity
-          if (!fileAuthorsCount.has(file.name)) {
-            fileAuthorsCount.set(file.name, new Set());
-          }
-          fileAuthorsCount.get(file.name)!.add(authorName);
+    state.totalLinesChanged += (commit.metrics.addedLines + commit.metrics.deletedLines);
+    if (commit.isFix) state.totalFixes++;
 
-          // Última modificación
-          const currentLastDate = fileLastCommitDate.get(file.name);
-          if (!currentLastDate || commitDate > currentLastDate) {
-            fileLastCommitDate.set(file.name, commitDate);
-          }
-        });
-      }
-    });
+    const filesCount = commit.files.length;
+    if (filesCount <= this.config.ADVANCED.ATOMICITY_SMALL_MAX_FILES) state.small++;
+    else if (filesCount <= this.config.ADVANCED.ATOMICITY_MEDIUM_MAX_FILES) state.medium++;
+    else state.large++;
 
-    // Cálculos Finales
-    const defectDensity = totalLinesChanged > 0 ? (totalFixes / (totalLinesChanged / 1000)) : 0;
-    const fridayFixesPercentage = totalFridayCommits > 0 ? Math.round((fridayFixesCount / totalFridayCommits) * 100) : 0;
+    if (commitDate.getDay() === 5) {
+      state.totalFridayCommits++;
+      if (commit.isFix) state.fridayFixesCount++;
+    }
 
-    const intersectionComplexity = Array.from(fileAuthorsCount.entries())
+    if (!isBot) {
+      commit.files.forEach(file => {
+        if (this.isIgnorableFile(file.name)) return;
+
+        if (!fileAuthorsCount.has(file.name)) fileAuthorsCount.set(file.name, new Set());
+        fileAuthorsCount.get(file.name)!.add(authorName);
+
+        const currentLastDate = fileLastCommitDate.get(file.name);
+        if (!currentLastDate || commitDate > currentLastDate) {
+          fileLastCommitDate.set(file.name, commitDate);
+        }
+      });
+    }
+  }
+
+  private getTopIntersectionComplexity(fileAuthorsCount: Map<string, Set<string>>) {
+    return Array.from(fileAuthorsCount.entries())
       .map(([file, authorsSet]) => ({ file, authorCount: authorsSet.size }))
-      .filter(item => item.authorCount >= this.config.ADVANCED.MIN_AUTHORS_FOR_BOTTLENECK) // Solo mostrar si lo tocan muchas personas
+      .filter(item => item.authorCount >= this.config.ADVANCED.MIN_AUTHORS_FOR_BOTTLENECK)
       .sort((a, b) => b.authorCount - a.authorCount)
-      .slice(0, 5); // Top 5 cuellos de botella
+      .slice(0, 5);
+  }
 
+  private getTopAbandonedFiles(fileLastCommitDate: Map<string, Date>) {
     const currentDate = new Date();
-    const abandonedFiles = Array.from(fileLastCommitDate.entries())
+    return Array.from(fileLastCommitDate.entries())
       .map(([file, lastDate]) => {
         const diffTime = Math.abs(currentDate.getTime() - lastDate.getTime());
         const diffMonths = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 30)); 
         return { file, monthsSinceLastCommit: diffMonths };
       })
-      .filter(item => item.monthsSinceLastCommit >= this.config.ADVANCED.MONTHS_TO_BE_ABANDONED) // Abandonado
+      .filter(item => item.monthsSinceLastCommit >= this.config.ADVANCED.MONTHS_TO_BE_ABANDONED)
       .sort((a, b) => b.monthsSinceLastCommit - a.monthsSinceLastCommit)
       .slice(0, 5);
-
-    return {
-      defectDensity: Number(defectDensity.toFixed(2)),
-      commitAtomicity: { small, medium, large },
-      fridayFixes: fridayFixesPercentage,
-      intersectionComplexity,
-      abandonedFiles
-    };
   }
 
   private calculateRisk(addedLines: number, deletedLines: number, filesTouched: number, isFix: boolean): { level: RiskLevel; score: number; reason: string } {

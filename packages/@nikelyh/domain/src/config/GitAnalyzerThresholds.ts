@@ -78,5 +78,12 @@ export const GIT_ANALYZER_THRESHOLDS = {
       C: 70,
       D: 60
     }
+  },
+
+  // --- 6. Triage Inteligente (Priorización) ---
+  TRIAGE: {
+    // Pesos porcentuales para la fórmula de prioridad de archivos (deben sumar 100)
+    AST_DEBT_WEIGHT: 40,
+    GIT_RISK_WEIGHT: 60
   }
 };
