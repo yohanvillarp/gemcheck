@@ -59,8 +59,8 @@ export const DuplicationViewer = () => {
   }
 
   return (
-    <div className="border-2 border-black dark:border-white p-6">
-      <h2 className="text-lg uppercase tracking-widest font-bold mb-6 flex items-center gap-2">
+    <div className="neo-card">
+      <h2 className="neo-title flex items-center gap-2">
         <Copy size={20} /> Detalle de Duplicaciones (Top 50)
       </h2>
 
@@ -83,11 +83,11 @@ export const DuplicationViewer = () => {
       )}
 
       {data && data.length > 0 && (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6 mt-4">
           {data.map((dup, index) => {
             const isExpanded = expandedIndex === index;
             return (
-              <div key={index} className="border-2 border-black dark:border-white bg-white dark:bg-zinc-900 overflow-hidden">
+              <div key={index} className="neo-card !p-0 overflow-hidden transition-all">
                 <div 
                   className="p-4 flex flex-col md:flex-row justify-between items-start md:items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
                   onClick={() => toggleExpand(index)}
@@ -109,7 +109,7 @@ export const DuplicationViewer = () => {
                   </div>
                   
                   <div className="flex items-center gap-4 mt-4 md:mt-0 flex-shrink-0">
-                    <span className="font-bold border-b-2 border-red-500 whitespace-nowrap">{dup.lines} LOC</span>
+                    <span className="neo-badge bg-red-100 text-red-800 whitespace-nowrap">{dup.lines} LOC</span>
                     <div className="flex-shrink-0">
                       {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                     </div>

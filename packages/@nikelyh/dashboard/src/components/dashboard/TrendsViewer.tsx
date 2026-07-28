@@ -16,7 +16,7 @@ export const TrendsViewer = ({ trends }: TrendsViewerProps) => {
 
   if (!trends || trends.length === 0) {
     return (
-      <div className="border-2 border-black dark:border-white p-8 text-center bg-gray-50 dark:bg-zinc-900">
+      <div className="neo-card text-center">
         <CheckCircle2 className="mx-auto mb-4" size={48} />
         <h3 className="text-xl font-bold uppercase mb-2">Sin datos de tendencias</h3>
         <p className="opacity-70">No hay historial reciente para mostrar.</p>
@@ -74,7 +74,7 @@ export const TrendsViewer = ({ trends }: TrendsViewerProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="border-2 border-black dark:border-white p-6 bg-blue-50 dark:bg-blue-900/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="neo-card flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h3 className="text-lg font-bold uppercase flex items-center gap-2 mb-2">
             <TrendingUp className="text-blue-500" />
@@ -109,7 +109,7 @@ export const TrendsViewer = ({ trends }: TrendsViewerProps) => {
         </div>
       </div>
 
-      <div className="border-2 border-black dark:border-white p-4 md:p-8 bg-white dark:bg-black">
+      <div className="neo-card !p-4 md:!p-8">
         <div className="h-[400px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={trends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>

@@ -9,7 +9,7 @@ interface FileMetricsTableProps {
 export const FileMetricsTable = ({ data }: FileMetricsTableProps) => {
   if (!data.fileMetrics || data.fileMetrics.length === 0) {
     return (
-      <div className="border-2 border-black dark:border-white">
+      <div className="neo-card !p-0">
         <div className="p-4 border-b-2 border-black dark:border-white bg-black text-white dark:bg-white dark:text-black">
           <h2 className="text-lg uppercase tracking-widest">Archivos con mayor Deuda Técnica</h2>
         </div>
@@ -21,7 +21,7 @@ export const FileMetricsTable = ({ data }: FileMetricsTableProps) => {
   }
 
   return (
-    <div className="border-2 border-black dark:border-white">
+    <div className="neo-card !p-0">
       <div className="p-4 border-b-2 border-black dark:border-white bg-black text-white dark:bg-white dark:text-black">
         <h2 className="text-lg uppercase tracking-widest">Archivos con mayor Deuda Técnica</h2>
       </div>
@@ -42,7 +42,7 @@ export const FileMetricsTable = ({ data }: FileMetricsTableProps) => {
             </tr>
           </thead>
           <tbody className="divide-y-2 divide-black dark:divide-white">
-            {data.fileMetrics.sort((a, b) => b.debtMinutes - a.debtMinutes).slice(0, 50).map((file, idx) => {
+            {data.fileMetrics.filter(f => f.debtMinutes > 0).sort((a, b) => b.debtMinutes - a.debtMinutes).slice(0, 50).map((file, idx) => {
               let relativePath = file.filePath;
               if (data.projectName && relativePath.startsWith(data.projectName)) {
                 relativePath = relativePath.substring(data.projectName.length);

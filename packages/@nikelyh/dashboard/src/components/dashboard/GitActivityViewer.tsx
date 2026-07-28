@@ -7,7 +7,7 @@ interface GitActivityViewerProps {
 export const GitActivityViewer = ({ activity }: GitActivityViewerProps) => {
   if (!activity || !activity.commits) {
     return (
-      <div className="border-2 border-black dark:border-white p-8 text-center bg-yellow-100 dark:bg-yellow-900 text-black dark:text-white">
+      <div className="neo-card text-center">
         No se encontró actividad de Git para mostrar. Asegúrate de ejecutar `gemcheck git` en un repositorio.
       </div>
     );
@@ -15,7 +15,7 @@ export const GitActivityViewer = ({ activity }: GitActivityViewerProps) => {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="border-2 border-black dark:border-white bg-white dark:bg-black p-6">
+      <div className="neo-card">
         <h2 className="text-2xl font-black uppercase mb-4 flex items-center gap-3">
           <GitMerge size={28} />
           Rama Activa: <span className="bg-black text-white dark:bg-white dark:text-black px-2 py-1 ml-2">{activity.branch}</span>

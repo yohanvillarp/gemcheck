@@ -63,6 +63,22 @@ export const HelpDashboard = () => {
           </HelpSection>
 
           <HelpSection 
+            id="complexity" 
+            icon={<BarChart3 size={32} />} 
+            title="gemcheck complexity"
+          >
+            <p className="mb-4 text-lg">Analiza la complejidad ciclomática de tus funciones para detectar código difícil de mantener o testear.</p>
+            <ul className="list-disc pl-6 mb-6 space-y-2">
+              <li><strong>Funciones Analizadas:</strong> Cantidad de funciones procesadas en tu proyecto.</li>
+              <li><strong>Complejidad Promedio:</strong> Nivel promedio de complejidad.</li>
+              <li><strong>Función Más Compleja:</strong> Identifica el bloque de código con mayor riesgo de errores debido a sus múltiples caminos de ejecución.</li>
+            </ul>
+            <div className="bg-black text-white p-4 font-mono text-sm">
+              $ gemcheck complexity --ui
+            </div>
+          </HelpSection>
+
+          <HelpSection 
             id="ci" 
             icon={<Shield size={32} />} 
             title="Integración CI/CD"

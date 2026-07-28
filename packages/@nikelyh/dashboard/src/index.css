@@ -2,6 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .neo-card {
+    @apply border-2 border-black dark:border-white p-6 bg-white dark:bg-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)];
+  }
+  .neo-title {
+    @apply font-bold text-sm tracking-widest uppercase border-b-2 border-black dark:border-white pb-2 mb-2;
+  }
+  .neo-badge {
+    @apply border-2 border-black dark:border-white uppercase font-bold px-2 py-1;
+  }
+  .neo-table-th {
+    @apply p-4 text-sm font-bold uppercase tracking-widest bg-black text-white dark:bg-white dark:text-black;
+  }
+  .neo-table-td {
+    @apply p-4 text-sm font-bold border-l-2 border-black dark:border-white;
+  }
+  .neo-btn {
+    @apply px-4 py-2 bg-white text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all font-bold uppercase;
+  }
+  .neo-btn-primary {
+    @apply px-4 py-2 bg-black text-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all font-bold uppercase;
+  }
+  .neo-btn-purple {
+    @apply px-4 py-2 bg-purple-400 text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all font-bold uppercase;
+  }
+}
+
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;

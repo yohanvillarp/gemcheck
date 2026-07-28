@@ -15,7 +15,7 @@ export const InsightsViewer = ({ advanced }: InsightsViewerProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="border-2 border-black dark:border-white p-6 bg-yellow-50 dark:bg-yellow-900/20">
+      <div className="neo-card">
         <h3 className="text-lg font-bold uppercase flex items-center gap-2 mb-2">
           <Brain className="text-yellow-600 dark:text-yellow-400" />
           Métricas Avanzadas (Insights)
@@ -27,7 +27,7 @@ export const InsightsViewer = ({ advanced }: InsightsViewerProps) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Defect Density */}
-        <div className="border-2 border-black dark:border-white p-6 flex flex-col justify-between">
+        <div className="neo-card flex flex-col justify-between">
           <div>
             <h4 className="font-bold uppercase tracking-widest mb-1 flex items-center gap-2">
               <ShieldAlert size={18} />
@@ -45,7 +45,7 @@ export const InsightsViewer = ({ advanced }: InsightsViewerProps) => {
         </div>
 
         {/* Friday Fixes */}
-        <div className="border-2 border-black dark:border-white p-6 flex flex-col justify-between">
+        <div className="neo-card flex flex-col justify-between">
           <div>
             <h4 className="font-bold uppercase tracking-widest mb-1 flex items-center gap-2">
               <Clock size={18} />
@@ -63,7 +63,7 @@ export const InsightsViewer = ({ advanced }: InsightsViewerProps) => {
         </div>
 
         {/* Commit Atomicity */}
-        <div className="border-2 border-black dark:border-white p-6 md:col-span-2">
+        <div className="neo-card md:col-span-2">
           <h4 className="font-bold uppercase tracking-widest mb-1 flex items-center gap-2">
             <GitCommitIcon size={18} />
             <Tooltip text="Distribución del tamaño de los commits. Commits grandes (+10 archivos) suelen introducir más bugs ocultos.">
@@ -97,7 +97,7 @@ export const InsightsViewer = ({ advanced }: InsightsViewerProps) => {
         </div>
 
         {/* Intersection Complexity */}
-        <div className="border-2 border-black dark:border-white p-6">
+        <div className="neo-card">
           <h4 className="font-bold uppercase tracking-widest mb-1 flex items-center gap-2">
             <Users size={18} />
             <Tooltip text="Archivos modificados por demasiados desarrolladores distintos. Frecuentemente indican God Objects o cuellos de botella de equipo.">
@@ -123,7 +123,7 @@ export const InsightsViewer = ({ advanced }: InsightsViewerProps) => {
         </div>
 
         {/* Abandoned Files */}
-        <div className="border-2 border-black dark:border-white p-6">
+        <div className="neo-card">
           <h4 className="font-bold uppercase tracking-widest mb-1 flex items-center gap-2">
             <Ghost size={18} />
             <Tooltip text="Archivos cuyo autor principal ya no ha hecho modificaciones al repositorio en más de 6 meses. Posible código muerto o huérfano.">

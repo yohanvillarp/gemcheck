@@ -9,6 +9,7 @@ export const HelpSidebar = () => {
           <li><a href="#quickstart" className="flex items-center gap-2 hover:underline"><Terminal size={18} /> Empezando</a></li>
           <li><a href="#scan" className="flex items-center gap-2 hover:underline"><Search size={18} /> Escaneo de Código (Scan)</a></li>
           <li><a href="#git" className="flex items-center gap-2 hover:underline"><GitCommit size={18} /> Evolución de Equipo (Git)</a></li>
+          <li><a href="#complexity" className="flex items-center gap-2 hover:underline"><Search size={18} /> Complejidad de Código</a></li>
           <li><a href="#ci" className="flex items-center gap-2 hover:underline text-red-500"><Shield size={18} /> Integración CI/CD (Gating)</a></li>
         </ul>
       </div>

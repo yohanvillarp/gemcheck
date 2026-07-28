@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 import { HelpCircle } from 'lucide-react';
@@ -105,6 +106,20 @@ export const HistoryChart = ({ history, isDarkMode }: HistoryChartProps) => {
 
   const activeConfig = METRICS_CONFIG.find(m => m.key === activeMetricKey) || METRICS_CONFIG[0];
 
+  const getAxisStyle = (dark: boolean) => ({
+    stroke: dark ? '#fff' : '#000',
+    tick: { fill: dark ? '#fff' : '#000', fontSize: 12 }
+  });
+
+  const getTooltipStyle = (dark: boolean) => ({
+    backgroundColor: dark ? '#000' : '#fff',
+    color: dark ? '#fff' : '#000',
+    border: `2px solid ${dark ? '#fff' : '#000'}`,
+    borderRadius: 0,
+    boxShadow: `4px 4px 0 0 ${dark ? '#fff' : '#000'}`,
+    fontFamily: 'monospace'
+  });
+
   return (
     <div className="border-2 border-black dark:border-white mt-12 p-6 flex flex-col gap-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -138,25 +153,18 @@ export const HistoryChart = ({ history, isDarkMode }: HistoryChartProps) => {
             <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#444' : '#ccc'} />
             <XAxis 
               dataKey="dateStr" 
-              stroke={isDarkMode ? '#fff' : '#000'}
-              tick={{fill: isDarkMode ? '#fff' : '#000', fontSize: 12}}
+              stroke={getAxisStyle(isDarkMode).stroke}
+              tick={getAxisStyle(isDarkMode).tick}
               tickMargin={10}
             />
             <YAxis 
-              stroke={isDarkMode ? '#fff' : '#000'} 
-              tick={{fill: isDarkMode ? '#fff' : '#000', fontSize: 12}}
+              stroke={getAxisStyle(isDarkMode).stroke}
+              tick={getAxisStyle(isDarkMode).tick}
               domain={['auto', 'auto']}
               width={40}
             />
             <RechartsTooltip 
-              contentStyle={{
-                backgroundColor: isDarkMode ? '#000' : '#fff',
-                color: isDarkMode ? '#fff' : '#000',
-                border: `2px solid ${isDarkMode ? '#fff' : '#000'}`,
-                borderRadius: 0,
-                boxShadow: `4px 4px 0 0 ${isDarkMode ? '#fff' : '#000'}`,
-                fontFamily: 'monospace'
-              }}
+              contentStyle={getTooltipStyle(isDarkMode)}
               labelStyle={{ fontWeight: 'bold', marginBottom: '4px' }}
             />
             <Line 

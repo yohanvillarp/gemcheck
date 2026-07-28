@@ -7,7 +7,7 @@ interface CouplingViewerProps {
 export const CouplingViewer = ({ coupling }: CouplingViewerProps) => {
   if (!coupling || coupling.length === 0) {
     return (
-      <div className="border-2 border-black dark:border-white p-8 text-center bg-gray-50 dark:bg-zinc-900">
+      <div className="neo-card text-center">
         <CheckCircle2 className="mx-auto mb-4" size={48} />
         <h3 className="text-xl font-bold uppercase mb-2">Bajo Acoplamiento</h3>
         <p className="opacity-70">No se encontraron dependencias ocultas fuertes entre archivos.</p>
@@ -17,7 +17,7 @@ export const CouplingViewer = ({ coupling }: CouplingViewerProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="border-2 border-black dark:border-white p-6 bg-pink-100 dark:bg-pink-900/30">
+      <div className="neo-card">
         <h3 className="text-lg font-bold uppercase flex items-center gap-2 mb-2">
           <Link className="text-pink-600 dark:text-pink-400" />
           Acoplamiento Lógico (Logical Coupling)

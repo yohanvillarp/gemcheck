@@ -5,6 +5,7 @@ export const useDashboardData = () => {
   const [data, setData] = useState<AuditData | null>(null);
   const [history, setHistory] = useState<any[]>([]);
   const [gitActivity, setGitActivity] = useState<any | null>(null);
+  const [complexityData, setComplexityData] = useState<any | null>(null);
 
   useEffect(() => {
     fetch('/data.json')
@@ -26,7 +27,15 @@ export const useDashboardData = () => {
       })
       .then(json => setGitActivity(json))
       .catch(() => console.log('No git activity found.'));
+
+    fetch('/api/complexity')
+      .then(res => {
+        if (!res.ok) throw new Error('Complexity data not available');
+        return res.json();
+      })
+      .then(json => setComplexityData(json))
+      .catch(() => console.log('No complexity data found.'));
   }, []);
 
-  return { data, history, gitActivity };
+  return { data, history, gitActivity, complexityData };
 };

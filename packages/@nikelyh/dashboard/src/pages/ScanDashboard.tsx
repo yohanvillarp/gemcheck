@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { DuplicationViewer } from '../components/dashboard/DuplicationViewer';
 import { FileMetricsTable } from '../components/dashboard/FileMetricsTable';
+import { TriagePanel } from '../components/dashboard/TriagePanel';
 import { HistoryChart } from '../components/dashboard/HistoryChart';
 import { MetricsSummary } from '../components/dashboard/MetricsSummary';
 import { ProjectInfo } from '../components/dashboard/ProjectInfo';
@@ -35,6 +36,7 @@ export const ScanDashboard = ({ data, history }: ScanDashboardProps) => {
 
       {activeTab === 'files' && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <TriagePanel />
           <FileMetricsTable data={data} />
         </div>
       )}
