@@ -4,8 +4,6 @@ Estamos trabajando continuamente para que Gemcheck sea aún más completo. A con
 
 ## Análisis Estático Avanzado
 
-* Evaluación de complejidad ciclomática para encontrar código difícil de leer.
-* Detección de código duplicado de forma estructurada.
 * Escaneo básico de vulnerabilidades (SAST) y dependencias desactualizadas.
 
 ## Pruebas Dinámicas

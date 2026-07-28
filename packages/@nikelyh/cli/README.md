@@ -33,21 +33,28 @@ npm install -g @nikelyh/gemcheck
 Una vez instalado, navega a cualquier directorio de tus proyectos en la terminal y ejecuta los comandos:
 
 ```bash
-# Para ejecutar un escaneo rápido en la terminal
+# Para ejecutar un escaneo rápido del historial git
 gemcheck scan
 
-# Para abrir el panel de control interactivo en tu navegador
+# Para analizar la complejidad ciclomática mediante AST
+gemcheck complexity --path <directorio>
+
+# Para intentar corregir automáticamente problemas detectados
+gemcheck fix
+
+# Para abrir el panel de control (Dashboard Neo-Brutalista) interactivo
 gemcheck config --ui
 
-# Para ver la ayuda completa y la lista de herramientas
+# Para ver la ayuda completa y la lista de comandos
 gemcheck --help
 ```
 
 ## Funcionalidades Principales
 
 * **Análisis Evolutivo de Git**: Detecta archivos problemáticos (Hotspots), concentración de conocimiento (Bus Factor) y código acoplado (Acoplamiento Lógico).
-* **Análisis Estático Local**: Detección de código duplicado y métricas de complejidad.
-* **Panel Visual**: Una interfaz gráfica (Dashboard) limpia e intuitiva que se levanta directamente desde tu consola.
+* **Análisis Estático Local y AST**: Cálculo de complejidad ciclomática/cognitiva mediante análisis estructural del código fuente.
+* **Triaje y Auto-fix**: Resolución automática de problemas (ej. *magic numbers*) utilizando `jscodeshift` integrado.
+* **Panel Visual (Neo-Brutalista)**: Una interfaz gráfica vibrante, rápida e intuitiva que se levanta directamente desde tu consola para revisar métricas.
 
 ## Acerca de este paquete
 

@@ -1,6 +1,6 @@
 {
   "name": "@nikelyh/gemcheck-infrastructure",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Infrastructure implementations",
   "type": "module",
   "main": "dist/index.js",

@@ -1,5 +1,22 @@
 # gemcheck
 
+## 0.3.0
+
+### Minor Changes
+
+- Lanzamiento v0.3.0:
+  - Motor de análisis de Complejidad AST y evaluación Estructural.
+  - Sistema de Auto-Fix automatizado con jscodeshift.
+  - Nuevo panel de control rediseñado (Neo-Brutalista).
+  - Triaje inteligente de deuda técnica.
+
+### Patch Changes
+
+- Updated dependencies
+  - @nikelyh/gemcheck-application@0.3.0
+  - @nikelyh/gemcheck-domain@0.3.0
+  - @nikelyh/gemcheck-infrastructure@0.3.0
+
 ## 0.2.2
 
 ### Patch Changes

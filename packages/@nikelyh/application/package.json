@@ -1,6 +1,6 @@
 {
   "name": "@nikelyh/gemcheck-application",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Application logic and use cases",
   "type": "module",
   "main": "dist/index.js",

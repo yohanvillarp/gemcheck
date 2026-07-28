@@ -38,7 +38,13 @@ Actualmente, Gemcheck ya puede hacer varias cosas geniales por tu proyecto:
   * **Hotspots (Puntos Calientes):** Detecta qué archivos cambian con demasiada frecuencia y podrían tener problemas o bugs ocultos.
   * **Bus Factor:** Identifica si partes críticas del código dependen de una sola persona, lo cual es un riesgo para el equipo.
   * **Acoplamiento Lógico:** Descubre qué archivos suelen modificarse siempre juntos, lo que ayuda a ver dependencias que tal vez no sabías que existían.
-* **Panel de Control Visual (Dashboard):** Una interfaz web limpia y amigable para ver los resultados de tus análisis.
+* **Análisis Estático Avanzado (AST):**
+  * **Complejidad Cognitiva y Ciclomática:** Analiza la estructura del código (`if`, `loops`, etc.) e identifica áreas difíciles de mantener o probar.
+  * **Detección de Duplicidad:** Encuentra patrones estructurales repetidos mediante el uso de árboles sintácticos (AST).
+* **Triaje y Resolución Automática (Auto-fix):**
+  * Asignación automática de niveles de riesgo a cada archivo basándose en múltiples métricas.
+  * Resolución y limpieza automática de código sucio usando `jscodeshift`.
+* **Panel de Control Visual (Dashboard):** Interfaz rediseñada en estilo **Neo-Brutalista** (vibrante y clara) para visualizar resultados de escaneos, configurar métricas y aplicar correcciones con un solo clic.
 * **Configuración Dinámica:** Puedes ajustar todos los valores y umbrales de los análisis a través de la interfaz web. Todo se guarda de forma persistente en una base de datos local para tus futuros análisis.
 
 ## Roadmap
